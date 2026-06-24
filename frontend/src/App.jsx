@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback } from 'react'
 
 // ── UPDATE THIS once your friend sends the HF Space URL ──
-const HF_URL = "https://YOUR-FRIEND-HF-SPACE.hf.space"
+const HF_URL = import.meta.env.VITE_API_BASE || "https://DEFAULT-SPACE-URL.hf.space"
 
 // ─────────────────────────────────────────────
 // DATA
