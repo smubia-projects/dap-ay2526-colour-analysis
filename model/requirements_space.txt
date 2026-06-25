@@ -1,0 +1,14 @@
+fastapi
+uvicorn[standard]
+torch
+torchvision
+pyfacer
+ftfy
+regex
+git+https://github.com/openai/CLIP.git
+Pillow
+opencv-python-headless
+numpy
+scikit-learn
+huggingface-hub
+upstash-redis
