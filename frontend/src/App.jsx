@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback } from 'react'
 
-// ── UPDATE THIS once your friend sends the HF Space URL ──
-const HF_URL = import.meta.env.VITE_API_BASE || "https://DEFAULT-SPACE-URL.hf.space"
+// Backend API base — set VITE_API_BASE in Vercel to the HF Space URL.
+const HF_URL = import.meta.env.VITE_API_BASE || "http://localhost:7860"
 
 // ─────────────────────────────────────────────
 // DATA
@@ -427,12 +427,26 @@ export default function App() {
       const response = await fetch(`${HF_URL}/api/predict`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ data: [base64] }),
+        body: JSON.stringify({ image: base64 }),
       })
 
+      if (response.status === 429) {
+        setError("You're going too fast — slow down and try again in a moment.")
+        return
+      }
+      if (response.status === 503) {
+        let msg = 'This demo is temporarily paused. Please check back soon.'
+        try {
+          const body = await response.json()
+          if (body?.detail?.message) msg = body.detail.message
+        } catch { /* keep default */ }
+        setError(msg)
+        return
+      }
       if (!response.ok) throw new Error(`Server error ${response.status}`)
+
       const json = await response.json()
-      setResult(json.data?.[0] ?? json)
+      setResult(json)
     } catch (err) {
       setError(err.message || 'Something went wrong. Please try again.')
     } finally {
