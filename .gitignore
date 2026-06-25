@@ -1,0 +1,14 @@
+# Model checkpoints live on HF Hub — never commit them (598MB, too large for git)
+*.pt
+*.onnx
+*.safetensors
+model/checkpoints/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.env
+
+# OS
+.DS_Store
