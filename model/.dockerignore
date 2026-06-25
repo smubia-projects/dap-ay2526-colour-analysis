@@ -1,0 +1,13 @@
+# Never bake the checkpoint into the image — it lives on HF Hub
+farl_classifier.pt
+checkpoints/
+
+# Python cruft
+__pycache__/
+*.pyc
+*.pyo
+
+# Local dev / notebooks / docs
+.env
+*.ipynb
+README.md
