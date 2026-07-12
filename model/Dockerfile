@@ -1,7 +1,10 @@
 FROM python:3.11-slim
 
-# git is required to pip-install CLIP from GitHub; gcc for any source builds
-RUN apt-get update && apt-get install -y --no-install-recommends gcc git \
+# git: pip-install CLIP from GitHub; gcc: source builds.
+# libgl1/libglib2.0-0/libxcb1: OpenCV native libs (pyfacer pulls full opencv-python,
+# which needs these system .so files that python:3.11-slim lacks).
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc git libgl1 libglib2.0-0 libxcb1 \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
