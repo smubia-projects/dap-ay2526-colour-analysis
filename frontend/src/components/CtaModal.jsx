@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react'
 
 const LINKS = [
-  { label: 'Join DAP',              href: 'https://t.me/join_smubia_dap', primary: true },
-  { label: 'Self-host from GitHub', href: 'https://github.com/smubia-projects/dap-ay2526-colour-analysis' },
-  { label: 'Explore other projects', href: 'https://www.smubia.com/showcase' },
+  { label: 'Join DAP',               href: 'https://t.me/join_smubia_dap', primary: true },
+  { label: 'Explore other projects', href: 'https://www.smubia.com/Projects' },
+  { label: 'View on GitHub',         href: 'https://github.com/smubia-projects/dap-ay2526-colour-analysis' },
 ]
 
 const ACCENT = '#9c5a1d'
