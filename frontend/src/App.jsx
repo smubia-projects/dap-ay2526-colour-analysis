@@ -1,7 +1,23 @@
 import { useState, useRef, useCallback } from 'react'
+import CtaModal from './components/CtaModal'
 
 // Backend API base — set VITE_API_BASE in Vercel to the HF Space URL.
 const HF_URL = import.meta.env.VITE_API_BASE || "http://localhost:7860"
+
+// Engagement CTA — fires once after CTA_AFTER successful analyses. This is not a rate
+// limit: it never blocks, and the backend's own 20/min limit is untouched by it. Three
+// lands after the typical 3-5 analysis evaluation burst rather than during it.
+const CTA_AFTER = 3
+const COUNT_KEY = 'dap-ay2526-colour-analysis:analyses'
+const SHOWN_KEY = 'dap-ay2526-colour-analysis:cta-shown'
+
+// localStorage throws in Safari private mode — a dead counter must never break analysis.
+const readStore = (key) => {
+  try { return window.localStorage.getItem(key) } catch { return null }
+}
+const writeStore = (key, value) => {
+  try { window.localStorage.setItem(key, value) } catch { /* counter is best-effort */ }
+}
 
 // ─────────────────────────────────────────────
 // DATA
@@ -407,9 +423,22 @@ export default function App() {
   const [result, setResult] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [cta, setCta] = useState(null)
 
   const handleImage = (f, url) => {
     setFile(f); setPreview(url); setResult(null); setError(null)
+  }
+
+  // Count a successful analysis and surface the CTA once the user is past the
+  // evaluation burst. Fires at most once ever, per SHOWN_KEY.
+  const countAnalysis = () => {
+    const next = (parseInt(readStore(COUNT_KEY), 10) || 0) + 1
+    writeStore(COUNT_KEY, String(next))
+
+    if (next >= CTA_AFTER && !readStore(SHOWN_KEY)) {
+      writeStore(SHOWN_KEY, '1')
+      setCta(next)
+    }
   }
 
   const analyse = async () => {
@@ -447,6 +476,7 @@ export default function App() {
 
       const json = await response.json()
       setResult(json)
+      countAnalysis()
     } catch (err) {
       setError(err.message || 'Something went wrong. Please try again.')
     } finally {
@@ -562,6 +592,8 @@ export default function App() {
         <span>Colour Season Analysis — ML Project</span>
         <span>FaRL · CLIP ViT-B/16 · K-Means · PyTorch</span>
       </footer>
+
+      {cta && <CtaModal count={cta} onDismiss={() => setCta(null)} />}
     </div>
   )
 }
